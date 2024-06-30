@@ -2,7 +2,7 @@ from typing import Optional
 from pyspark.sql.functions import col, when, sum as spark_sum, to_date, trim, lower
 from pyspark.sql.window import Window
 from pyspark.sql.dataframe import DataFrame
-from EtlFramework import ETL
+from Framework.EtlFramework import ETL
 
 import os
 
