@@ -9,10 +9,18 @@ pool:
 trigger:
 - main
 
+variables:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - name: ENVIRONMENT
+      value: TST
+  - ${{ else }}:
+    - name: ENVIRONMENT
+      value: DEV
+
+  - group: AbaKeyVault-${{ variables.ENVIRONMENT }}
+
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-  displayName: 'Run a multi-line script'
+    echo ${{ variables.ENVIRONMENT }}
+  displayName: 'echo the variable'
