@@ -23,4 +23,6 @@ steps:
 
 - script: |
     echo ${{ variables.ENVIRONMENT }}
+    echo StorageAccessKey-DEV:$(StorageAccessKey-DEV)
+    echo apiExchangeRate-DEV:$(apiExchangeRate-DEV)
   displayName: 'echo the variable'
