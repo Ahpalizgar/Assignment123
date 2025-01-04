@@ -16,13 +16,13 @@ steps:
       echo " ==== set Terraform values for using azure resources ====="
       export ARM_CLIENT_ID=${{ parameters.dataPlatformPrincipalId }}
       export ARM_CLIENT_SECRET=${{ parameters.dataPlatformPrincipalKey }}
-      export ARM_TENANT_ID="fed95e69-8d73-43fe-affb-a7d85ede36fb"
+      export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
       export ARM_SUBSCRIPTION_ID=${{ parameters.dataPlatformSubscriptionId }}
 
       # Terraform steps
       az account set -s ${{ parameters.dataPlatformSubscriptionName }}
-      cd $(System.DefaultWorkingDirectory)/platform/terraform
-      terraform init -backend-config="$(System.DefaultWorkingDirectory)/platform/terraform/backendconfigs/${{ parameters.env }}.hcl"
+      cd $(System.DefaultWorkingDirectory)/terraform
+      terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
       terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
     addSpnToEnvironment: true
   displayName: Terraform apply

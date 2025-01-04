@@ -9,6 +9,8 @@ variables:
     value: AbaKeyVault-TST
   - name: serviceConnection
     value: apdap-devops-sc-tst
+  - name: servicePrincipleId
+    value: apdap-devops-sc-tst-client-id
   - name: serviceConnectionSecret
     value: apdap-devops-sc-tst-client-secret
 

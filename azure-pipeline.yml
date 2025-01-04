@@ -35,7 +35,7 @@ stages:
   condition: and(succeeded(), eq('${{ parameters.tfdestroy }}', false))
   variables:
     - group: ${{variables.keyVaultName}}
-    - template: /platform/variables/${{variables.env}}.yml
+    - template: /variables/${{variables.env}}.yml
   jobs:
   - job: terraform_plan
     steps:
@@ -46,16 +46,16 @@ stages:
         parameters:
           env: $(env)
           serviceConnection: $(serviceConnection)
-          dataPlatformPrincipalId: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-ID)
-          dataPlatformPrincipalKey: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-SECRET)
+          dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
       - template: templates/terraform-apply.yml
         parameters:
           env: $(env)
           serviceConnection: $(serviceConnection)
-          dataPlatformPrincipalId: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-ID)
-          dataPlatformPrincipalKey: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-SECRET)
+          dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
           dataPlatformSubscriptionId: ${{ variables.dataPlatformSubscriptionId }}
           dataPlatformSubscriptionName: ${{ variables.dataPlatformSubscriptionName }}
 
