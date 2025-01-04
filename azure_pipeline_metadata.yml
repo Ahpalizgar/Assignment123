@@ -71,13 +71,14 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo " ==== set Terraform values for using azure resources ====="
-          export ARM_CLIENT_ID= $(apdap-devops-sc-tst-client-id)
-          export ARM_CLIENT_SECRET= $(apdap-devops-sc-test-client-secret)
+          export ARM_CLIENT_ID= "$(apdap-devops-sc-tst-client-id)"
+          export ARM_CLIENT_SECRET= "$(apdap-devops-sc-tst-client-secret)"
           export ARM_TENANT_ID= "0d739c66-dcf8-4b06-87ab-9052bd918a5f"
-          export ARM_SUBSCRIPTION_ID= $(dataPlatformSubscriptionId)
+          export ARM_SUBSCRIPTION_ID= "$(dataPlatformSubscriptionId)"
 
           # Terraform steps
           az account set -s ${{ parameters.dataPlatformSubscriptionName }}
+          echo $(System.DefaultWorkingDirectory)
           cd $(System.DefaultWorkingDirectory)/terraform
           ls
           terraform init -backend-config="$(System.DefaultWorkingDirectory)/backendconfigs/tst.hcl"
