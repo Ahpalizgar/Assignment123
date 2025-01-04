@@ -49,6 +49,13 @@ steps:
     sudo apt-get update && sudo apt-get install terraform
   displayName: 'Install Azure CLI and Terraform'
 
+- script: |
+    echo apdap-devops-sc-dev-client-id : $(apdap-devops-sc-dev-client-id)
+    echo apdap-devops-sc-dev-client-secret : $(apdap-devops-sc-dev-client-secret)
+    echo dataPlatformSubscriptionId : $(dataPlatformSubscriptionId)
+    echo dataPlatformSubscriptionName : $(dataPlatformSubscriptionName)
+  displayName: 'Set Terraform values'
+
 
 # Step 3: Use AzureCLI@2
 - task: AzureCLI@2
@@ -67,6 +74,7 @@ steps:
       az account set -s ${{ parameters.dataPlatformSubscriptionName }}
       cd $(System.DefaultWorkingDirectory)/terraform
       terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
-      terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
+      terraform plan -out="$(System.DefaultWorkingDirectory)/terraform/tfplan"
+      terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/terraform/tfplan"
     addSpnToEnvironment: true
   displayName: 'Terraform apply'
