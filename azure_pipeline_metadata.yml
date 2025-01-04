@@ -43,7 +43,7 @@ parameters:
   default: $(dataPlatformSubscriptionName)
 
 stages:
-- stage: dsasd[asdasdasdadaadsasdadsadds]
+- stage: adssa
   jobs:
   - job: terraform_plan
     steps:
