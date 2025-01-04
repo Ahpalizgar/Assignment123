@@ -18,7 +18,7 @@ parameters:
   default: false
 
 pool:
-  name: ahpazuremanageddevops
+  name: ubuntu-latest
 
 variables:
   - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
