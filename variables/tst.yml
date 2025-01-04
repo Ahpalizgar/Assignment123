@@ -4,7 +4,7 @@ variables:
   - name: dataPlatformSubscriptionName
     value: Azure_subscription_1
   - name: env
-    value: TST
+    value: tst
   - name: keyVaultName
     value: AbaKeyVault-TST
   - name: serviceConnection
