@@ -23,6 +23,7 @@ variables:
     - template: variables/tst.yml
   - ${{ else }}:
     - template: variables/dev.yml
+  - group: $(keyVaultName)
 
 parameters:
 - name: env
@@ -37,6 +38,8 @@ parameters:
   default: $(dataPlatformSubscriptionId)
 - name: dataPlatformSubscriptionName
   default: $(dataPlatformSubscriptionName)
+- name: keyVaultName
+  default: $(keyVaultName)
 
 steps:
 - script: |
