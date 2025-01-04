@@ -41,7 +41,7 @@ parameters:
 steps:
 - task: AzureCLI@2
   inputs:
-    azureSubscription: '22aa9b03-5bec-414b-8814-fa975beb8e08'
+    azureSubscription: ${{ parameters.serviceConnection }}
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
