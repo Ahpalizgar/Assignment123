@@ -25,13 +25,18 @@ variables:
     - template: variables/dev.yml
 
 parameters:
-  env: $(env)
-  serviceConnection: $(serviceConnection)
-  dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
-  dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
-  dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
-  dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-
+- name: env
+  value: $(env)
+- name: serviceConnection
+  value: $(serviceConnection)
+- name: dataPlatformPrincipalId
+  value: $(apdap-devops-sc-dev-client-id)
+- name: dataPlatformPrincipalKey
+  value: $(apdap-devops-sc-dev-client-secret)
+- name: dataPlatformSubscriptionId
+  value: $(dataPlatformSubscriptionId)
+- name: dataPlatformSubscriptionName
+  value: $(dataPlatformSubscriptionName)
 
 steps:
 - task: AzureCLI@2
