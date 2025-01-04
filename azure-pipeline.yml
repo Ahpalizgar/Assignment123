@@ -1,0 +1,91 @@
+trigger:
+  branches:
+    include:
+    - main
+    - test
+    - features/*
+  tags:
+    include:
+    - "*"    
+  paths:
+    include:
+    - platform/*
+
+parameters:
+- name: tfdestroy
+  displayName: Terraform Destroy
+  type: boolean
+  default: false
+
+pool:
+  name: ahpazuremanageddevops
+
+variables:
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
+    - template: variables/prd.yml
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
+    - template: variables/acc.yml
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
+    - template: variables/tst.yml
+  - ${{ else }}:
+    - template: variables/dev.yml
+
+stages:
+- stage: Terraform_run
+  condition: and(succeeded(), eq('${{ parameters.tfdestroy }}', false))
+  variables:
+    - group: ${{variables.keyVaultName}}
+    - template: /platform/variables/${{variables.env}}.yml
+  jobs:
+  - job: terraform_plan
+    steps:
+      - task: TerraformInstaller@1
+        inputs:
+          terraformVersion: 'latest'
+      - template: templates/terraform-plan.yml
+        parameters:
+          env: $(env)
+          serviceConnection: $(serviceConnection)
+          dataPlatformPrincipalId: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-ID)
+          dataPlatformPrincipalKey: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-SECRET)
+          dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
+          dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
+      - template: templates/terraform-apply.yml
+        parameters:
+          env: $(env)
+          serviceConnection: $(serviceConnection)
+          dataPlatformPrincipalId: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-ID)
+          dataPlatformPrincipalKey: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-SECRET)
+          dataPlatformSubscriptionId: ${{ variables.dataPlatformSubscriptionId }}
+          dataPlatformSubscriptionName: ${{ variables.dataPlatformSubscriptionName }}
+
+
+# - stage: terraform_destroy
+#   condition: eq('${{ parameters.tfdestroy }}', true)
+#   variables:
+#     - group: ${{variables.keyVaultName}}
+#     - template: /platform/variables/${{variables.env}}.yml
+#   jobs:
+#   - job: manual_validation
+#     pool: server
+#     steps:
+#       - task: ManualValidation@0
+#         timeoutInMinutes: 2880 # task times out in 2 day
+#         inputs:
+#           # notifyUsers: |
+#           #   vb11vn@insim.biz
+#           instructions: '!WARNING! This will bring down our entire workspace config! Validate that this is what you want to do!'
+#           onTimeout: 'reject'          
+#   - job: terraform_destroy
+#     steps:
+#       - task: TerraformInstaller@1
+#         inputs:
+#           terraformVersion: 'latest'
+#       - template: templates/terraform-destroy.yml
+#         parameters:
+#           env: $(env)
+#           serviceConnection: $(serviceConnection)
+#           dataPlatformPrincipalId: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-ID)
+#           dataPlatformPrincipalKey: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-SECRET)
+#           dataPlatformSubscriptionId: ${{ variables.dataPlatformSubscriptionId }}
+#           dataPlatformSubscriptionName: ${{ variables.dataPlatformSubscriptionName }}

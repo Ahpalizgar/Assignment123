@@ -1,0 +1,31 @@
+parameters:
+  env:
+  serviceConnection:
+  dataPlatformPrincipalId:
+  dataPlatformPrincipalKey:
+  dataPlatformSubscriptionId:
+  dataPlatformSubscriptionName:
+  buildTag:
+
+steps:  
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: ${{ parameters.serviceConnection }}
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        echo " ==== set Terraform values for using azure resources ====="
+
+        export ARM_CLIENT_ID=${{ parameters.dataPlatformPrincipalId }}
+        export ARM_CLIENT_SECRET=${{ parameters.dataPlatformPrincipalKey }}
+        export ARM_TENANT_ID="fed95e69-8d73-43fe-affb-a7d85ede36fb"
+        export ARM_SUBSCRIPTION_ID=${{ parameters.dataPlatformSubscriptionId }}
+
+        # Terraform steps 
+        az account set -s ${{ parameters.dataPlatformSubscriptionName }}
+        cd $(System.DefaultWorkingDirectory)/platform/terraform
+        terraform init -backend-config="$(System.DefaultWorkingDirectory)/platform/terraform/backendconfigs/${{ parameters.env }}.hcl"
+        terraform plan -var-file="$(System.DefaultWorkingDirectory)/platform/terraform/tfvars/${{ parameters.env }}.tfvars" \
+            -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan" -var="aba_idl_tag=${{ parameters.buildTag }}"
+      addSpnToEnvironment: true
+    displayName: Terraform plan

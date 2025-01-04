@@ -1,0 +1,13 @@
+variables:
+  - name: dataPlatformSubscriptionId
+    value: 22aa9b03-5bec-414b-8814-fa975beb8e08
+  - name: dataPlatformSubscriptionName
+    value: Azure subscription 1
+  - name: env
+    value: DEV
+  - name: keyVaultName
+    value: AbaKeyVault-DEV
+  - name: serviceConnection
+    value: apdap-devops-sc-dev
+
+
