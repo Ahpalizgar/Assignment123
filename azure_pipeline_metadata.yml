@@ -39,10 +39,14 @@ parameters:
   default: $(dataPlatformSubscriptionName)
 
 steps:
-- script: |
-    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-  displayName: 'Install Azure CLI'
-  
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: '22aa9b03-5bec-414b-8814-fa975beb8e08'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az --version
+
 - task: AzureCLI@2
   inputs:
     azureSubscription: ${{ parameters.serviceConnection }}
