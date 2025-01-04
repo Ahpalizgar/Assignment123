@@ -18,7 +18,7 @@ parameters:
   default: false
 
 pool:
-  vmImage: ubuntu-latest
+  name: ahpazuremanageddevops
 
 variables:
   - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
