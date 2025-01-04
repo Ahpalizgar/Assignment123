@@ -15,7 +15,7 @@ pool:
   name: ahpazuremanageddevops
 
 variables:
-  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
     - template: variables/prd.yml
   - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
     - template: variables/tst.yml
