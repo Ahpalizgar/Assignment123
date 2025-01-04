@@ -39,13 +39,9 @@ stages:
   jobs:
   - job: terraform_plan
     steps:
-      - script: |
-          curl -o terraform.zip https://releases.hashicorp.com/terraform/1.10.2/terraform_1.10.2_linux_amd64.zip
-          mkdir -p ~/terraform
-          unzip terraform.zip -d ~/terraform
-          sudo mv ~/terraform/terraform /usr/local/bin/
-          terraform version
-        displayName: 'Manually install Terraform'
+      - task: TerraformInstaller@1
+        inputs:
+          terraformVersion: 'latest'
       - template: terraform/templates/terraform-plan.yml
         parameters:
           env: $(env)
