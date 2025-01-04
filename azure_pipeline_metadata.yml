@@ -15,14 +15,18 @@ pool:
   name: ahpazuremanageddevops
 
 variables:
-  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
-    - template: variables/prd.yml
-  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
-    - template: variables/acc.yml
-  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
-    - template: variables/tst.yml
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - name: ENVIRONMENT
+      value: PRD
+  - ${{ elseif startsWith(variables['Build.SourceBranch'], 'refs/heads/test') }}:
+    - name: ENVIRONMENT
+      value: TST
   - ${{ else }}:
-    - template: variables/dev.yml
+    - name: ENVIRONMENT
+      value: DEV
+
+  - group: AbaKeyVault-${{ variables.ENVIRONMENT }}
+
 
 parameters:
 - name: env
@@ -37,13 +41,9 @@ parameters:
   default: $(dataPlatformSubscriptionId)
 - name: dataPlatformSubscriptionName
   default: $(dataPlatformSubscriptionName)
-- name: keyVaultName
-  default: $(keyVaultName)
 
 stages:
-- stage: tf_bootstrap_storage
-  variables:
-    - group: $(keyVaultName)
+- stage: dsasd[asdasdasdadaadsasdadsadds]
   jobs:
   - job: terraform_plan
     steps:
@@ -83,7 +83,7 @@ stages:
           az account set -s ${{ parameters.dataPlatformSubscriptionName }}
           cd $(System.DefaultWorkingDirectory)/terraform
           terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
-          terraform plan -out="$(System.DefaultWorkingDirectory)/terraform/tfplan"
-          terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/terraform/tfplan"
+          terraform plan -var-file="terraform.tfvars"
+          terraform apply  -auto-approve -var-file="terraform.tfvars"
         addSpnToEnvironment: true
       displayName: 'Terraform apply'
