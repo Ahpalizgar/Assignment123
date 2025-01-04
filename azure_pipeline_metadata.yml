@@ -44,44 +44,46 @@ stages:
 - stage: tf_bootstrap_storage
   variables:
     - group: $(keyVaultName)
-  steps:
-  - script: |
-      # Install Azure CLI
-      curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-      
-      # Install Terraform
-      wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
-      echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-      sudo apt-get update && sudo apt-get install terraform
-    displayName: 'Install Azure CLI and Terraform'
+  jobs:
+  - job: terraform_plan
+    steps:
+    - script: |
+        # Install Azure CLI
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        
+        # Install Terraform
+        wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt-get update && sudo apt-get install terraform
+      displayName: 'Install Azure CLI and Terraform'
 
-  - script: |
-      echo apdap-devops-sc-dev-client-id : $(apdap-devops-sc-dev-client-id)
-      echo apdap-devops-sc-dev-client-secret : $(apdap-devops-sc-dev-client-secret)
-      echo dataPlatformSubscriptionId : $(dataPlatformSubscriptionId)
-      echo dataPlatformSubscriptionName : $(dataPlatformSubscriptionName)
-      echo keyVaultName : $(keyVaultName) 
-    displayName: 'Set Terraform values'
+    - script: |
+        echo apdap-devops-sc-dev-client-id : $(apdap-devops-sc-dev-client-id)
+        echo apdap-devops-sc-dev-client-secret : $(apdap-devops-sc-dev-client-secret)
+        echo dataPlatformSubscriptionId : $(dataPlatformSubscriptionId)
+        echo dataPlatformSubscriptionName : $(dataPlatformSubscriptionName)
+        echo keyVaultName : $(keyVaultName) 
+      displayName: 'Set Terraform values'
 
 
-  # Step 3: Use AzureCLI@2
-  - task: AzureCLI@2
-    inputs:
-      azureSubscription: ${{ parameters.serviceConnection }}
-      scriptType: 'bash'
-      scriptLocation: 'inlineScript'
-      inlineScript: |
-        echo " ==== set Terraform values for using azure resources ====="
-        export ARM_CLIENT_ID="${{ parameters.dataPlatformPrincipalId }}"
-        export ARM_CLIENT_SECRET="${{ parameters.dataPlatformPrincipalKey }}"
-        export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
-        export ARM_SUBSCRIPTION_ID="${{ parameters.dataPlatformSubscriptionId }}"
+    # Step 3: Use AzureCLI@2
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: ${{ parameters.serviceConnection }}
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          echo " ==== set Terraform values for using azure resources ====="
+          export ARM_CLIENT_ID="${{ parameters.dataPlatformPrincipalId }}"
+          export ARM_CLIENT_SECRET="${{ parameters.dataPlatformPrincipalKey }}"
+          export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
+          export ARM_SUBSCRIPTION_ID="${{ parameters.dataPlatformSubscriptionId }}"
 
-        # Terraform steps
-        az account set -s ${{ parameters.dataPlatformSubscriptionName }}
-        cd $(System.DefaultWorkingDirectory)/terraform
-        terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
-        terraform plan -out="$(System.DefaultWorkingDirectory)/terraform/tfplan"
-        terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/terraform/tfplan"
-      addSpnToEnvironment: true
-    displayName: 'Terraform apply'
+          # Terraform steps
+          az account set -s ${{ parameters.dataPlatformSubscriptionName }}
+          cd $(System.DefaultWorkingDirectory)/terraform
+          terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
+          terraform plan -out="$(System.DefaultWorkingDirectory)/terraform/tfplan"
+          terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/terraform/tfplan"
+        addSpnToEnvironment: true
+      displayName: 'Terraform apply'
