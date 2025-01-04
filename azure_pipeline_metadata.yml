@@ -50,19 +50,19 @@ stages:
 
     - task: AzureCLI@2
       inputs:
-        azureSubscription: "apdap-devops-sc-tst"
+        azureSubscription: $(serviceConnection)
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo " ==== set Terraform values for using azure resources ====="
-          export ARM_CLIENT_ID="ac373095-2e54-4920-ad36-2f92dbf05e6a"
-          export ARM_CLIENT_SECRET= "er~8Q~khvFA0CwzOUUcAkLdA5s84IAdLzvH.PcqY"
-          export ARM_TENANT_ID= "0d739c66-dcf8-4b06-87ab-9052bd918a5f"
-          export ARM_SUBSCRIPTION_ID= "22aa9b03-5bec-414b-8814-fa975beb8e08"
+          export ARM_CLIENT_ID='ac373095-2e54-4920-ad36-2f92dbf05e6a'
+          export ARM_CLIENT_SECRET='er~8Q~khvFA0CwzOUUcAkLdA5s84IAdLzvH.PcqY'
+          export ARM_TENANT_ID='0d739c66-dcf8-4b06-87ab-9052bd918a5f'
+          export ARM_SUBSCRIPTION_ID='22aa9b03-5bec-414b-8814-fa975beb8e08'
 
           # Terraform steps
           az account list
-          az account set --subscription="22aa9b03-5bec-414b-8814-fa975beb8e08"
+          az account set --subscription='22aa9b03-5bec-414b-8814-fa975beb8e08'
           cd $(System.DefaultWorkingDirectory)/terraform
           terraform init \
             -backend-config="backendconfigs/tst.hcl"
