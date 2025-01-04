@@ -39,14 +39,17 @@ parameters:
   default: $(dataPlatformSubscriptionName)
 
 steps:
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: ${{ parameters.serviceConnection }}
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az --version
+# Step 1: Install Azure CLI
+- script: |
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  displayName: 'Install Azure CLI'
 
+# Step 2: Verify Azure CLI Installation
+- script: |
+    az --version
+  displayName: 'Verify Azure CLI Installation'
+
+# Step 3: Use AzureCLI@2
 - task: AzureCLI@2
   inputs:
     azureSubscription: ${{ parameters.serviceConnection }}
@@ -65,4 +68,4 @@ steps:
       terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
       terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
     addSpnToEnvironment: true
-  displayName: Terraform apply
+  displayName: 'Terraform apply'
