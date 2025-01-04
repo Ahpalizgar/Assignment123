@@ -11,15 +11,6 @@ trigger:
     include:
     - platform/*
 
-parameters:
-  env: $(env)
-  serviceConnection: $(serviceConnection)
-  dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
-  dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
-  dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
-  dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-
-
 pool:
   name: ahpazuremanageddevops
 
@@ -32,6 +23,14 @@ variables:
     - template: variables/tst.yml
   - ${{ else }}:
     - template: variables/dev.yml
+
+parameters:
+  env: $(env)
+  serviceConnection: $(serviceConnection)
+  dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
+  dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
+  dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
+  dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
 
 
 steps:
