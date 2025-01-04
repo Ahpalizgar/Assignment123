@@ -42,7 +42,7 @@ stages:
       - task: TerraformInstaller@1
         inputs:
           terraformVersion: 'latest'
-      - template: templates/terraform-plan.yml
+      - template: terraform/templates/terraform-plan.yml
         parameters:
           env: $(env)
           serviceConnection: $(serviceConnection)
@@ -50,7 +50,7 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-      - template: templates/terraform-apply.yml
+      - template: terraform/templates/terraform-apply.yml
         parameters:
           env: $(env)
           serviceConnection: $(serviceConnection)
