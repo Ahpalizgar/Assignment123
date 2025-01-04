@@ -57,8 +57,8 @@ stages:
     #   displayName: 'Install Azure CLI and Terraform'
 
     - script: |
-        echo apdap-devops-sc-dev-client-id : $(apdap-devops-sc-dev-client-id)
-        echo apdap-devops-sc-dev-client-secret : $(apdap-devops-sc-dev-client-secret)
+        echo apdap-devops-sc-dev-client-id : $(apdap-devops-sc-tst-client-id)
+        echo apdap-devops-sc-dev-client-secret : $(apdap-devops-sc-tst-client-secret)
         echo dataPlatformSubscriptionId : $(dataPlatformSubscriptionId)
         echo dataPlatformSubscriptionName : $(dataPlatformSubscriptionName)
         echo keyVaultName : $(keyVaultName) 
