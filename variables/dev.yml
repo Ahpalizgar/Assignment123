@@ -9,5 +9,5 @@ variables:
     value: AbaKeyVault-DEV
   - name: serviceConnection
     value: apdap-devops-sc-dev
-
-
+  - name: serviceConnectionSecret
+    value: apdap-devops-sc-dev-client-secret

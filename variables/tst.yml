@@ -8,6 +8,8 @@ variables:
   - name: keyVaultName
     value: AbaKeyVault-TST
   - name: serviceConnection
-    value: nnb-apdap-devops-sc-tst
+    value: apdap-devops-sc-tst
+  - name: serviceConnectionSecret
+    value: apdap-devops-sc-tst-client-secret
 
 
