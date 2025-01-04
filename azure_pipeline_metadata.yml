@@ -79,7 +79,7 @@ stages:
           # Terraform steps
           az account set -s ${{ parameters.dataPlatformSubscriptionName }}
           cd $(System.DefaultWorkingDirectory)/terraform
-          terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
+          terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/tst.hcl"
           terraform plan -var-file="terraform.tfvars"
           terraform apply  -auto-approve -var-file="terraform.tfvars"
         addSpnToEnvironment: true
