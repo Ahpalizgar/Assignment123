@@ -71,8 +71,8 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
           echo " ==== set Terraform values for using azure resources ====="
-          export ARM_CLIENT_ID="e77cfc35-52eb-4460-ad46-242e4b67da21"
-          export ARM_CLIENT_SECRET= "nu38Q~vpfyVEWxdWUy84PvuwwfZbaO~eJ1Z5ZbQS"
+          export ARM_CLIENT_ID="ac373095-2e54-4920-ad36-2f92dbf05e6a"
+          export ARM_CLIENT_SECRET= "er~8Q~khvFA0CwzOUUcAkLdA5s84IAdLzvH.PcqY"
           export ARM_TENANT_ID= "0d739c66-dcf8-4b06-87ab-9052bd918a5f"
           export ARM_SUBSCRIPTION_ID= "22aa9b03-5bec-414b-8814-fa975beb8e08"
 
