@@ -81,7 +81,7 @@ stages:
           echo $(System.DefaultWorkingDirectory)
           cd $(System.DefaultWorkingDirectory)/terraform
           ls
-          terraform init -backend-config="$(System.DefaultWorkingDirectory)/backendconfigs/tst.hcl"
+          terraform init -backend-config="backendconfigs/tst.hcl"
           terraform plan -var-file="terraform.tfvars"
           terraform apply  -auto-approve -var-file="terraform.tfvars"
         addSpnToEnvironment: true
