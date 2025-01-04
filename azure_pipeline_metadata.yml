@@ -31,9 +31,9 @@ parameters:
 - name: serviceConnection
   default: $(serviceConnection)
 - name: dataPlatformPrincipalId
-  default: $(apdap-devops-sc-dev-client-id)
+  default: $(apdap-devops-sc-test-client-id)
 - name: dataPlatformPrincipalKey
-  default: $(apdap-devops-sc-dev-client-secret)
+  default: $(apdap-devops-sc-test-client-secret)
 - name: dataPlatformSubscriptionId
   default: $(dataPlatformSubscriptionId)
 - name: dataPlatformSubscriptionName
@@ -80,7 +80,7 @@ stages:
           az account set -s ${{ parameters.dataPlatformSubscriptionName }}
           cd $(System.DefaultWorkingDirectory)/terraform
           ls
-          terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/tst.hcl"
+          terraform init -backend-config="$(System.DefaultWorkingDirectory)/backendconfigs/tst.hcl"
           terraform plan -var-file="terraform.tfvars"
           terraform apply  -auto-approve -var-file="terraform.tfvars"
         addSpnToEnvironment: true
