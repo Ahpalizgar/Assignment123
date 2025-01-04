@@ -25,20 +25,6 @@ variables:
     - template: variables/dev.yml
 
 
-parameters:
-- name: env
-  default: $(env)
-- name: serviceConnection
-  default: $(serviceConnection)
-- name: dataPlatformPrincipalId
-  default: $(apdap-devops-sc-tst-client-id)
-- name: dataPlatformPrincipalKey
-  default: $(apdap-devops-sc-tst-client-secret)
-- name: dataPlatformSubscriptionId
-  default: $(dataPlatformSubscriptionId)
-- name: dataPlatformSubscriptionName
-  default: $(dataPlatformSubscriptionName)
-
 stages:
 - stage: adssa
   variables:
@@ -59,8 +45,6 @@ stages:
     - script: |
         echo apdap-devops-sc-tst-client-id : $(apdap-devops-sc-tst-client-id)
         echo apdap-devops-sc-tst-client-secret : $(apdap-devops-sc-tst-client-secret)
-        echo dataPlatformSubscriptionId : $(dataPlatformSubscriptionId)
-        echo dataPlatformSubscriptionName : $(dataPlatformSubscriptionName)
       displayName: 'Set Terraform values'
 
 

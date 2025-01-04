@@ -14,6 +14,11 @@ variable "client_id" {
 }
 
 variable "client_secret" {
+    type        = string
+    description = "secret id."
+  }
+
+variable "key_vault_id" {
   type        = string
-  description = "secret id."
+  description = "key vault id."
 }
