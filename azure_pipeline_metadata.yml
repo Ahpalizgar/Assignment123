@@ -15,10 +15,8 @@ pool:
   name: ahpazuremanageddevops
 
 variables:
-  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
-    - template: variables/prd.yml
   - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
-    - template: variables/acc.yml
+    - template: variables/prd.yml
   - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
     - template: variables/tst.yml
   - ${{ else }}:
@@ -42,11 +40,6 @@ stages:
         sudo apt-get update && sudo apt-get install terraform
       displayName: 'Install Azure CLI and Terraform'
 
-    - script: |
-        echo apdap-devops-sc-tst-client-id : $(apdap-devops-sc-tst-client-id)
-        echo apdap-devops-sc-tst-client-secret : $(apdap-devops-sc-tst-client-secret)
-      displayName: 'Set Terraform values'
-
 
     - task: AzureCLI@2
       inputs:
@@ -61,12 +54,12 @@ stages:
           export ARM_SUBSCRIPTION_ID='$(dataPlatformSubscriptionId)'
 
           # Terraform steps
-          az account list
-          az account set --subscription='22aa9b03-5bec-414b-8814-fa975beb8e08'
+          az account set --subscription='$(dataPlatformSubscriptionId)'
           cd $(System.DefaultWorkingDirectory)/terraform
-          terraform init \
-            -backend-config="backendconfigs/tst.hcl"
-          terraform plan -var-file="terraform.tfvars"
-          terraform apply -auto-approve -var-file="terraform.tfvars"
+
+          terraform init -backend-config="backendconfigs/$(env).hcl"
+          terraform plan -var-file="tfvars/$(env).tfvars"
+          terraform apply -auto-approve -var-file="tfvars/$(env).tfvars"
+
         addSpnToEnvironment: true
       displayName: 'Terraform apply'
