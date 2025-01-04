@@ -15,17 +15,14 @@ pool:
   name: ahpazuremanageddevops
 
 variables:
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-    - name: ENVIRONMENT
-      value: PRD
-  - ${{ elseif startsWith(variables['Build.SourceBranch'], 'refs/heads/test') }}:
-    - name: ENVIRONMENT
-      value: TST
+  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
+    - template: variables/prd.yml
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
+    - template: variables/acc.yml
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
+    - template: variables/tst.yml
   - ${{ else }}:
-    - name: ENVIRONMENT
-      value: DEV
-
-  - group: AbaKeyVault-${{ variables.ENVIRONMENT }}
+    - template: variables/dev.yml
 
 
 parameters:
@@ -44,6 +41,8 @@ parameters:
 
 stages:
 - stage: adssa
+  variables:
+      - group: ${{variables.keyVaultName}}
   jobs:
   - job: terraform_plan
     steps:
