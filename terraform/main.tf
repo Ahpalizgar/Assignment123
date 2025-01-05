@@ -50,8 +50,8 @@ resource "azurerm_databricks_workspace" "dbworkspace" {
 # }
 
 
-resource "databricks_secret_scope" "secretscope" {
-  name = "application-secret-scope"
-  initial_manage_principal = "users"
-  depends_on = [azurerm_databricks_workspace.dbworkspace]
-}
+# resource "databricks_secret_scope" "secretscope" {
+#   name = "application-secret-scope"
+#   initial_manage_principal = "users"
+#   depends_on = [azurerm_databricks_workspace.dbworkspace]
+# }
