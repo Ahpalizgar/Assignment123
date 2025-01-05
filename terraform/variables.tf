@@ -17,3 +17,8 @@ variable "client_secret" {
     type        = string
     description = "secret id."
   }
+
+variable "key_vault_id" {
+  type        = string
+  description = "key vault id."
+}

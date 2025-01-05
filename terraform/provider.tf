@@ -18,13 +18,13 @@ provider "azurerm" {
 
   tenant_id       = var.tenant_id
   subscription_id = var.subscription_id
-  client_id       = var.client_id
-  client_secret   = var.client_secret
+  client_id       = data.azurerm_key_vault_secret.apdap-devops-sc-client-id.value
+  client_secret   = data.azurerm_key_vault_secret.apdap-devops-sc-client-secret.value
 }
 
 provider "databricks" {
   host                = azurerm_databricks_workspace.dbworkspace.workspace_url
-  azure_client_id     = var.client_id
-  azure_client_secret = var.client_secret
+  azure_client_id     = data.azurerm_key_vault_secret.apdap-devops-sc-client-id.value
+  azure_client_secret = data.azurerm_key_vault_secret.apdap-devops-sc-client-secret.value
   azure_tenant_id     = var.tenant_id
 }
