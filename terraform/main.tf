@@ -57,5 +57,6 @@ resource "databricks_secret_scope" "adb_secret" {
     resource_id = azurerm_key_vault.keyvault.id
     dns_name    = azurerm_key_vault.keyvault.vault_uri
   }
+  
   depends_on = [azurerm_databricks_workspace.dbworkspace, azurerm_key_vault.keyvault]
 }
