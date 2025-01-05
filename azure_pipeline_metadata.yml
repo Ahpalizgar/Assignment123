@@ -24,7 +24,7 @@ variables:
 
 
 stages:
-- stage: adssa
+- stage: Deploy
   variables:
       - group: ${{variables.keyVaultName}}
   jobs:
