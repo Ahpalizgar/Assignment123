@@ -50,9 +50,12 @@ resource "databricks_group" "adb_group" {
 }
 
 
-resource "databricks_secret_scope" "secretscope" {
-  name = "application-secret-scope"
+resource "databricks_secret_scope" "adb_secret" {
+  name                     = "application-secret-scope"
   initial_manage_principal = "users"
-  depends_on = [azurerm_databricks_workspace.dbworkspace]
+  keyvault_metadata {
+    resource_id = azurerm_key_vault.keyvault.id
+    dns_name    = azurerm_key_vault.keyvault.vault_uri
+  }
+  depends_on = [azurerm_databricks_workspace.dbworkspace, azurerm_key_vault.keyvault]
 }
-
