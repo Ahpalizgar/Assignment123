@@ -55,3 +55,4 @@ resource "databricks_group" "adb_group" {
 #   initial_manage_principal = "users"
 #   depends_on = [azurerm_databricks_workspace.dbworkspace]
 # }
+# jn
