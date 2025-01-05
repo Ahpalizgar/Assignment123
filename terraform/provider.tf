@@ -15,11 +15,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-
-  tenant_id       = var.tenant_id
-  subscription_id = var.subscription_id
-  client_id       = data.azurerm_key_vault_secret.apdap-devops-sc-client-id.value
-  client_secret   = data.azurerm_key_vault_secret.apdap-devops-sc-client-secret.value
 }
 
 provider "databricks" {
