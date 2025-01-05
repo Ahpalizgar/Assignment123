@@ -8,15 +8,6 @@ variable "subscription_id" {
   description = "subscription id."
 }
 
-variable "client_id" {
-  type        = string
-  description = "client id."
-}
-
-variable "client_secret" {
-    type        = string
-    description = "secret id."
-  }
 
 variable "key_vault_id" {
   type        = string
