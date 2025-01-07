@@ -59,7 +59,7 @@ stages:
             export ARM_SUBSCRIPTION_ID=$(dataPlatformSubscriptionId)
             export ARM_CLIENT_ID=$(apdap-devops-sc-client-id)
             export ARM_CLIENT_SECRET=$(apdap-devops-sc-client-secret)
-            export ARM_TENANT_ID=$(tenantId)
+            export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
 
             terraform init
             terraform apply -var-file="env.tfvars" -auto-approve
