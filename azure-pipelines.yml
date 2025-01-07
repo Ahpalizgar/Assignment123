@@ -63,5 +63,5 @@ stages:
           serviceConnection: $(serviceConnection)
           dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
-          dataPlatformSubscriptionId: ${ dataPlatformSubscriptionId }
-          dataPlatformSubscriptionName: ${{ dataPlatformSubscriptionName }}
+          dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
+          dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
