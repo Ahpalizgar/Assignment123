@@ -80,12 +80,8 @@ stages:
         # Use variables from the previous stage
         - script: |
             echo "Using dynamic backend configuration..."
-
-            echo "bootstrap_resource_group: $(bootstrap_resource_group)"
-            echo "bootstrap_storage_account: $(bootstrap_storage_account)"
-            echo "bootstrap_container_name: $(bootstrap_container_name)"
-
             cd $(System.DefaultWorkingDirectory)/terraform
+            az account set -s $(dataPlatformSubscriptionName)
             terraform init -backend-config="resource_group_name=$(bootstrap_resource_group)" \
                            -backend-config="storage_account_name=$(bootstrap_storage_account)" \
                            -backend-config="container_name=$(bootstrap_container_name)" \
@@ -100,8 +96,6 @@ stages:
   - job: terraform_plan
     steps:
       - template: terraform/templates/install-tools.yml
-      
-      # Existing Terraform plan template
       - template: terraform/templates/terraform-plan.yml
         parameters:
           env: $(env)
