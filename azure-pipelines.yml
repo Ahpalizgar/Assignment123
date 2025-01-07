@@ -26,6 +26,7 @@ stages:
 - stage: Terraform_run
   variables:
     - group: ${{variables.keyVaultName}}
+    - template: /variables/${{variables.env}}.yml
   jobs:
   - job: terraform_plan
     steps:
