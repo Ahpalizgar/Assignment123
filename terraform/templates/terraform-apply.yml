@@ -5,6 +5,7 @@ parameters:
   dataPlatformPrincipalKey:
   dataPlatformSubscriptionId:
   dataPlatformSubscriptionName:
+  buildTag:
 
 steps:
 - task: AzureCLI@2
@@ -22,7 +23,9 @@ steps:
       # Terraform steps
       az account set -s ${{ parameters.dataPlatformSubscriptionName }}
       cd $(System.DefaultWorkingDirectory)/terraform
-      terraform init -backend-config="$(System.DefaultWorkingDirectory)/terraform/backendconfigs/${{ parameters.env }}.hcl"
+
+      terraform init -backend-config="backendconfigs/${{ parameters.env }}.hcl"
       terraform apply -input=false -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
+      
     addSpnToEnvironment: true
   displayName: Terraform apply

@@ -9,6 +9,8 @@ variables:
     value: AbaKeyVault-TST
   - name: serviceConnection
     value: apdap-devops-sc-tst
+  - name: buildTag
+    value: ${{variables['noSuch']}}
  
 
 

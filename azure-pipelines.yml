@@ -1,28 +1,50 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+trigger:
+  branches:
+    include:
+    - main
+    - test
+    - features/*
+  tags:
+    include:
+    - "*"    
+  paths:
+    include:
+    - terraform/*
 
 pool:
   name: ahpazuremanageddevops
 
-trigger:
-- main
-
 variables:
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-    - name: ENVIRONMENT
-      value: TST
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
+    - template: variables/prd.yml
+  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
+    - template: variables/tst.yml
   - ${{ else }}:
-    - name: ENVIRONMENT
-      value: DEV
+    - template: variables/dev.yml
 
-  - group: AbaKeyVault-${{ variables.ENVIRONMENT }}
-
-steps:
-
-- script: |
-    echo ${{ variables.ENVIRONMENT }}
-    echo StorageAccessKey:$(StorageAccessKey-TST)
-    echo apiExchangeRate:$(apiExchangeRate-TST)
-  displayName: 'echo the variable'
+stages:
+- stage: Terraform_run
+  variables:
+    - group: ${{variables.keyVaultName}}
+  jobs:
+  - job: terraform_plan
+    steps:
+      - task: TerraformInstaller@1
+        inputs:
+          version: 'latest'
+      - template: templates/terraform-plan.yml
+        parameters:
+          env: $(env)
+          serviceConnection: $(serviceConnection)
+          dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
+          dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
+          dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
+      - template: templates/terraform-apply.yml
+        parameters:
+          env: $(env)
+          serviceConnection: $(serviceConnection)
+          dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
+          dataPlatformSubscriptionId: ${{ dataPlatformSubscriptionId }}
+          dataPlatformSubscriptionName: ${{ dataPlatformSubscriptionName }}
