@@ -73,6 +73,10 @@ stages:
             STORAGE_ACCOUNT=$(terraform output -raw storage_account_name)
             CONTAINER_NAME=$(terraform output -raw container_name)
 
+            echo "RESOURCE_GROUP: $RESOURCE_GROUP"
+            echo "STORAGE_ACCOUNT: $STORAGE_ACCOUNT"
+            echo "CONTAINER_NAME: $CONTAINER_NAME"
+
             echo "##vso[task.setvariable variable=bootstrap_resource_group]$RESOURCE_GROUP"
             echo "##vso[task.setvariable variable=bootstrap_storage_account]$STORAGE_ACCOUNT"
             echo "##vso[task.setvariable variable=bootstrap_container_name]$CONTAINER_NAME"
@@ -87,6 +91,11 @@ stages:
         # Use variables from the previous stage
         - script: |
             echo "Using dynamic backend configuration..."
+
+            echo "bootstrap_resource_group: $(bootstrap_resource_group)"
+            echo "bootstrap_storage_account: $(bootstrap_storage_account)"
+            echo "bootstrap_container_name: $(bootstrap_container_name)"
+
             cd $(System.DefaultWorkingDirectory)/terraform
             terraform init -backend-config="resource_group_name=$(bootstrap_resource_group)" \
                            -backend-config="storage_account_name=$(bootstrap_storage_account)" \
