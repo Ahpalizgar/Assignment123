@@ -31,24 +31,7 @@ stages:
     - job: bootstrap_storage
       displayName: Bootstrap Terraform State Storage
       steps:
-        # Add this step to install unzip
-        - script: |
-            echo "Installing unzip..."
-            sudo apt-get update && sudo apt-get install -y unzip
-          displayName: Install unzip
-      
-        - script: |
-            echo "Installing Azure CLI..."
-            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-          displayName: Install Azure CLI
-
-        - task: TerraformInstaller@1
-          inputs:
-            version: 'latest'
-
-
-
-
+        - template: terraform/templates/install-tools.yml
         # Initialize and Apply Bootstrap
         - script: |
             echo "Initializing Terraform for bootstrap storage..."
@@ -93,6 +76,7 @@ stages:
         bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
       displayName: Terraform State Management
       steps:
+        - template: terraform/templates/install-tools.yml
         # Use variables from the previous stage
         - script: |
             echo "Using dynamic backend configuration..."
@@ -115,21 +99,7 @@ stages:
   jobs:
   - job: terraform_plan
     steps:
-      # Add this step to install unzip
-      - script: |
-          echo "Installing unzip..."
-          sudo apt-get update && sudo apt-get install -y unzip
-        displayName: Install unzip
-      
-      - script: |
-          echo "Installing Azure CLI..."
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-        displayName: Install Azure CLI
-
-      # TerraformInstaller step
-      - task: TerraformInstaller@1
-        inputs:
-          version: 'latest'
+      - template: terraform/templates/install-tools.yml
       
       # Existing Terraform plan template
       - template: terraform/templates/terraform-plan.yml
