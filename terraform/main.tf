@@ -30,16 +30,16 @@ resource "azurerm_key_vault" "keyvault" {
   sku_name = "standard"
 }
 
-resource "azurerm_databricks_workspace" "dbworkspace" {
-  name                = "ahpterraformdbworkspace"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  sku                 = "standard"
+# resource "azurerm_databricks_workspace" "dbworkspace" {
+#   name                = "ahpterraformdbworkspace"
+#   resource_group_name = azurerm_resource_group.rg.name
+#   location            = azurerm_resource_group.rg.location
+#   sku                 = "standard"
 
-  tags = {
-    Environment = "DEV"
-  }
-}
+#   tags = {
+#     Environment = "DEV"
+#   }
+# }
 
 # resource "databricks_group" "adb_group" {
 #   provider                   = databricks
