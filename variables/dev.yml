@@ -10,4 +10,4 @@ variables:
   - name: serviceConnection
     value: apdap-devops-sc-dev
   - name: buildTag
-    value: ${{variables['noSuch']}}
+    value: via-terraform

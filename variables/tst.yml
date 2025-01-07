@@ -10,7 +10,7 @@ variables:
   - name: serviceConnection
     value: apdap-devops-sc-tst
   - name: buildTag
-    value: khbkbkj
+    value: via-terraform
  
 
 
