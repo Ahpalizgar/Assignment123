@@ -30,9 +30,18 @@ stages:
   jobs:
   - job: terraform_plan
     steps:
+      # Add this step to install unzip
+      - script: |
+          echo "Installing unzip..."
+          sudo apt-get update && sudo apt-get install -y unzip
+        displayName: Install unzip
+      
+      # TerraformInstaller step
       - task: TerraformInstaller@1
         inputs:
           version: 'latest'
+      
+      # Existing Terraform plan template
       - template: terraform/templates/terraform-plan.yml
         parameters:
           env: $(env)
@@ -41,6 +50,7 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
+
       # - template: terraform/templates/terraform-apply.yml
       #   parameters:
       #     env: $(env)
