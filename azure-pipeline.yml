@@ -43,10 +43,13 @@ stages:
           inputs:
             version: 'latest'
 
+
+
+
         # Initialize and Apply Bootstrap
         - script: |
             echo "Initializing Terraform for bootstrap storage..."
-            az account set -s ${{ parameters.dataPlatformSubscriptionName }}
+            az account set -s $(dataPlatformSubscriptionName)
             cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
 
             # Set Azure provider authentication variables
