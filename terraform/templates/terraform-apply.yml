@@ -5,7 +5,6 @@ parameters:
   dataPlatformPrincipalKey:
   dataPlatformSubscriptionId:
   dataPlatformSubscriptionName:
-  buildTag:
 
 steps:
 - task: AzureCLI@2

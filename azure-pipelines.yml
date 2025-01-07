@@ -55,12 +55,13 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-
-      # - template: terraform/templates/terraform-apply.yml
-      #   parameters:
-      #     env: $(env)
-      #     serviceConnection: $(serviceConnection)
-      #     dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
-      #     dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
-      #     dataPlatformSubscriptionId: ${{ dataPlatformSubscriptionId }}
-      #     dataPlatformSubscriptionName: ${{ dataPlatformSubscriptionName }}
+          buildTag: $(buildTag)
+          
+      - template: terraform/templates/terraform-apply.yml
+        parameters:
+          env: $(env)
+          serviceConnection: $(serviceConnection)
+          dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
+          dataPlatformSubscriptionId: ${{ dataPlatformSubscriptionId }}
+          dataPlatformSubscriptionName: ${{ dataPlatformSubscriptionName }}
