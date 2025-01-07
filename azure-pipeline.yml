@@ -9,83 +9,111 @@ trigger:
     - "*"    
   paths:
     include:
-    - platform/*
-
-parameters:
-- name: tfdestroy
-  displayName: Terraform Destroy
-  type: boolean
-  default: false
+    - terraform/*
 
 pool:
   name: ahpazuremanageddevops
 
 variables:
-  - ${{ if startsWith(variables['Build.SourceBranch'], 'refs/tags') }}:
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
     - template: variables/prd.yml
-  - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:    
-    - template: variables/acc.yml
   - ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/test') }}:    
     - template: variables/tst.yml
   - ${{ else }}:
     - template: variables/dev.yml
 
 stages:
+- stage: tf_bootstrap_storage
+  jobs:
+    - job: bootstrap_storage
+      displayName: Bootstrap Terraform State Storage
+      steps:
+        # Install prerequisites
+        - script: |
+            echo "Installing Azure CLI..."
+            curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          displayName: Install Azure CLI
+
+        - task: TerraformInstaller@1
+          inputs:
+            version: 'latest'
+
+        # Initialize and Apply Bootstrap
+        - script: |
+            echo "Initializing Terraform for bootstrap storage..."
+            cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
+            terraform init
+            terraform apply -var-file="env.tfvars" -auto-approve
+          displayName: Terraform Apply for Bootstrap Storage
+
+        # Fetch Output Values
+        - script: |
+            echo "Fetching backend configuration dynamically..."
+            cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
+            RESOURCE_GROUP=$(terraform output -raw resource_group_name)
+            STORAGE_ACCOUNT=$(terraform output -raw storage_account_name)
+            CONTAINER_NAME=$(terraform output -raw container_name)
+
+            echo "##vso[task.setvariable variable=bootstrap_resource_group]$RESOURCE_GROUP"
+            echo "##vso[task.setvariable variable=bootstrap_storage_account]$STORAGE_ACCOUNT"
+            echo "##vso[task.setvariable variable=bootstrap_container_name]$CONTAINER_NAME"
+          displayName: Set Backend Configuration Variables
+
+- stage: tf_state_management
+  dependsOn: tf_bootstrap_storage
+  jobs:
+    - job: terraform_state_management
+      displayName: Terraform State Management
+      steps:
+        # Use variables from the previous stage
+        - script: |
+            echo "Using dynamic backend configuration..."
+            cd $(System.DefaultWorkingDirectory)/terraform
+            terraform init -backend-config="resource_group_name=$(bootstrap_resource_group)" \
+                           -backend-config="storage_account_name=$(bootstrap_storage_account)" \
+                           -backend-config="container_name=$(bootstrap_container_name)" \
+                           -backend-config="key=terraform.tfstate"
+          displayName: Terraform Init with Dynamic Backend
+
 - stage: Terraform_run
-  condition: and(succeeded(), eq('${{ parameters.tfdestroy }}', false))
   variables:
     - group: ${{variables.keyVaultName}}
     - template: /variables/${{variables.env}}.yml
   jobs:
   - job: terraform_plan
     steps:
+      # Add this step to install unzip
+      - script: |
+          echo "Installing unzip..."
+          sudo apt-get update && sudo apt-get install -y unzip
+        displayName: Install unzip
+      
+      - script: |
+          echo "Installing Azure CLI..."
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        displayName: Install Azure CLI
+
+      # TerraformInstaller step
       - task: TerraformInstaller@1
         inputs:
-          terraformVersion: 'latest'
+          version: 'latest'
+      
+      # Existing Terraform plan template
       - template: terraform/templates/terraform-plan.yml
         parameters:
           env: $(env)
           serviceConnection: $(serviceConnection)
-          dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
-          dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
+          dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
+          buildTag: $(buildTag)
+          
       - template: terraform/templates/terraform-apply.yml
         parameters:
           env: $(env)
           serviceConnection: $(serviceConnection)
-          dataPlatformPrincipalId: $(apdap-devops-sc-dev-client-id)
-          dataPlatformPrincipalKey: $(apdap-devops-sc-dev-client-secret)
-          dataPlatformSubscriptionId: ${{ variables.dataPlatformSubscriptionId }}
-          dataPlatformSubscriptionName: ${{ variables.dataPlatformSubscriptionName }}
-
-
-# - stage: terraform_destroy
-#   condition: eq('${{ parameters.tfdestroy }}', true)
-#   variables:
-#     - group: ${{variables.keyVaultName}}
-#     - template: /platform/variables/${{variables.env}}.yml
-#   jobs:
-#   - job: manual_validation
-#     pool: server
-#     steps:
-#       - task: ManualValidation@0
-#         timeoutInMinutes: 2880 # task times out in 2 day
-#         inputs:
-#           # notifyUsers: |
-#           #   vb11vn@insim.biz
-#           instructions: '!WARNING! This will bring down our entire workspace config! Validate that this is what you want to do!'
-#           onTimeout: 'reject'          
-#   - job: terraform_destroy
-#     steps:
-#       - task: TerraformInstaller@1
-#         inputs:
-#           terraformVersion: 'latest'
-#       - template: templates/terraform-destroy.yml
-#         parameters:
-#           env: $(env)
-#           serviceConnection: $(serviceConnection)
-#           dataPlatformPrincipalId: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-ID)
-#           dataPlatformPrincipalKey: $(SUBSCRIPTION-NNB-ABA-NNDAP-CLIENT-SECRET)
-#           dataPlatformSubscriptionId: ${{ variables.dataPlatformSubscriptionId }}
-#           dataPlatformSubscriptionName: ${{ variables.dataPlatformSubscriptionName }}
+          dataPlatformPrincipalId: $(apdap-devops-sc-client-id)
+          dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
+          dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
+          dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
