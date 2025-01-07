@@ -27,7 +27,7 @@ steps:
 
         terraform init -backend-config="backendconfigs/${{ parameters.env }}.hcl"
         terraform plan -var-file="tfvars/${{ parameters.env }}.tfvars" \
-            -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan" -var="aba_idl_tag=${{ parameters.buildTag }}"
+            -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
         
       addSpnToEnvironment: true
     displayName: Terraform plan
