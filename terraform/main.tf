@@ -41,13 +41,13 @@ resource "azurerm_databricks_workspace" "dbworkspace" {
   }
 }
 
-resource "databricks_group" "adb_group" {
-  provider                   = databricks
-  display_name               = "Data Engineers"
-  allow_cluster_create       = true
-  allow_instance_pool_create = true
-  depends_on = [azurerm_databricks_workspace.dbworkspace]
-}
+# resource "databricks_group" "adb_group" {
+#   provider                   = databricks
+#   display_name               = "Data Engineers"
+#   allow_cluster_create       = true
+#   allow_instance_pool_create = true
+#   depends_on = [azurerm_databricks_workspace.dbworkspace]
+# }
 
 
 # resource "databricks_secret_scope" "secretscope" {
