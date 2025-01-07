@@ -46,6 +46,7 @@ stages:
         # Initialize and Apply Bootstrap
         - script: |
             echo "Initializing Terraform for bootstrap storage..."
+            az account set -s ${{ parameters.dataPlatformSubscriptionName }}
             cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
 
             # Set Azure provider authentication variables
@@ -53,7 +54,7 @@ stages:
             export ARM_CLIENT_ID=$(apdap-devops-sc-client-id)
             export ARM_CLIENT_SECRET=$(apdap-devops-sc-client-secret)
             export ARM_TENANT_ID=$(tenantId)
-            
+
             terraform init
             terraform apply -var-file="env.tfvars" -auto-approve
           displayName: Terraform Apply for Bootstrap Storage
