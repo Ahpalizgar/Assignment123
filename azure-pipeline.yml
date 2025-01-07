@@ -80,7 +80,7 @@ stages:
             echo "##vso[task.setvariable variable=bootstrap_resource_group;isOutput=true]$RESOURCE_GROUP"
             echo "##vso[task.setvariable variable=bootstrap_storage_account;isOutput=true]$STORAGE_ACCOUNT"
             echo "##vso[task.setvariable variable=bootstrap_container_name;isOutput=true]$CONTAINER_NAME"
-          name: setVars
+          name: stagevars
           displayName: Set Backend Configuration Variables
 
 - stage: tf_state_management
@@ -88,9 +88,9 @@ stages:
   jobs:
     - job: terraform_state_management
       variables:
-        bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.setVars.bootstrap_resource_group]
-        bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.setVars.bootstrap_storage_account]
-        bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.setVars.bootstrap_container_name]
+        bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.stagevars.bootstrap_resource_group]
+        bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.stagevars.bootstrap_storage_account]
+        bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.stagevars.bootstrap_container_name]
       displayName: Terraform State Management
       steps:
         # Use variables from the previous stage
