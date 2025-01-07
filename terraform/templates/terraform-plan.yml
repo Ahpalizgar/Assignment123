@@ -8,14 +8,6 @@ parameters:
   buildTag:
 
 steps:          
-  - script: |
-      echo "dataPlatformSubscriptionId: ${{ parameters.dataPlatformSubscriptionId }}"
-      echo "dataPlatformSubscriptionName: ${{ parameters.dataPlatformSubscriptionName }}"
-      echo "dataPlatformPrincipalId: ${{ parameters.dataPlatformPrincipalId }}"
-      echo "dataPlatformPrincipalKey: ${{ parameters.dataPlatformPrincipalKey }}"
-      echo "buildTag: ${{ parameters.buildTag }}"
-    displayName: 'Echo Parameters'
-
   - task: AzureCLI@2
     inputs:
       azureSubscription: ${{ parameters.serviceConnection }}
