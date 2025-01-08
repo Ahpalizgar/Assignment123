@@ -47,7 +47,8 @@ stages:
             export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
 
             terraform init
-            terraform apply -var-file="tfvars/${{variables.env}}.tfvars" -auto-approve
+            terraform plan -var-file="tfvars/${{variables.env}}.tfvars" -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
+            terraform apply -var-file="tfvars/${{variables.env}}.tfvars" -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
           displayName: Terraform Apply for Bootstrap Storage
 
         - script: |
