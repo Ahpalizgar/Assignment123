@@ -25,7 +25,7 @@ resource "azurerm_storage_account" "bootstrap_storage" {
 resource "azurerm_storage_container" "bootstrap_container" {
   name                  = var.bootstrap_container_name
   storage_account_name  = azurerm_storage_account.bootstrap_storage.name
-  container_access_type = "private"
+  container_access_type = "container"
 }
 
 # Output Variables

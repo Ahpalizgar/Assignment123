@@ -6,6 +6,9 @@ parameters:
   dataPlatformSubscriptionId:
   dataPlatformSubscriptionName:
   buildTag:
+  bootstrap_resource_group:
+  bootstrap_storage_account:
+  bootstrap_container_name:
 
 steps:          
   - task: AzureCLI@2
@@ -25,7 +28,12 @@ steps:
         az account set -s ${{ parameters.dataPlatformSubscriptionName }}
         cd $(System.DefaultWorkingDirectory)/terraform
 
-        terraform init -backend-config="backendconfigs/${{ parameters.env }}.hcl"
+        terraform init \
+          -backend-config="resource_group_name=${{ parameters.bootstrap_resource_group }}" \
+          -backend-config="storage_account_name=${{ parameters.bootstrap_storage_account }}" \
+          -backend-config="container_name=${{ parameters.bootstrap_container_name }}" \
+          -backend-config="key=terraform.tfstate"
+          
         terraform plan -var-file="tfvars/${{ parameters.env }}.tfvars" \
             -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
         

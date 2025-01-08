@@ -101,8 +101,14 @@ stages:
   variables:
     - group: ${{variables.keyVaultName}}
     - template: /variables/${{variables.env}}.yml
+  dependsOn: tf_bootstrap_storage
   jobs:
   - job: terraform_plan
+    variables:
+        bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_resource_group']]
+        bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_storage_account']]
+        bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
+    displayName: Terraform State Management
     steps:
       - template: terraform/templates/install-tools.yml
       - template: terraform/templates/terraform-plan.yml
@@ -113,7 +119,9 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-          buildTag: $(buildTag)
+          bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_resource_group']]
+          bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_storage_account']]
+          bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
           
       - template: terraform/templates/terraform-apply.yml
         parameters:
@@ -123,3 +131,7 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
+          bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_resource_group']]
+          bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_storage_account']]
+          bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
+
