@@ -45,6 +45,8 @@ stages:
         # Step 1: Check if backend configuration exists
         - script: |
             echo "Checking if backend storage account exists..."
+            az login --service-principal --username $(apdap-devops-sc-client-id) --password $(apdap-devops-sc-client-secret) --tenant $(tenant_id)
+            
             STORAGE_ACCOUNT_CHECK=$(az storage account show \
               --name $(bootstrap_storage_account_name) \
               --resource-group $(bootstrap_resource_group_name) \
@@ -81,7 +83,15 @@ stages:
 
         - script: |
             echo "Reinitializing Terraform with remote backend..."
+            az account set -s $(dataPlatformSubscriptionName)
             cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
+
+            # Set Azure provider authentication variables
+            export ARM_SUBSCRIPTION_ID=$(dataPlatformSubscriptionId)
+            export ARM_CLIENT_ID=$(apdap-devops-sc-client-id)
+            export ARM_CLIENT_SECRET=$(apdap-devops-sc-client-secret)
+            export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
+
             terraform init \
               -reconfigure \
               -backend-config="resource_group_name=$(bootstrap_resource_group_name)" \
