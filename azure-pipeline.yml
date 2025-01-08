@@ -81,6 +81,13 @@ stages:
         - script: |
             echo "Using dynamic backend configuration..."
             cd $(System.DefaultWorkingDirectory)/terraform
+            
+            # Set Azure provider authentication variables
+            export ARM_SUBSCRIPTION_ID=$(dataPlatformSubscriptionId)
+            export ARM_CLIENT_ID=$(apdap-devops-sc-client-id)
+            export ARM_CLIENT_SECRET=$(apdap-devops-sc-client-secret)
+            export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
+
             az account set -s $(dataPlatformSubscriptionName)
             terraform init -backend-config="resource_group_name=$(bootstrap_resource_group)" \
                            -backend-config="storage_account_name=$(bootstrap_storage_account)" \
