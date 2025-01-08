@@ -27,6 +27,7 @@ stages:
   variables:
     - group: ${{variables.keyVaultName}}
     - template: /variables/${{variables.env}}.yml
+    - template: /terraform/tf-bootstrap-storage/tfvars/${{variables.env}}.yml
   jobs:
     - job: bootstrap_storage
       displayName: Bootstrap Terraform State Storage
@@ -35,6 +36,24 @@ stages:
           inputs:
             version: 'latest'
 
+        # Step 1: Check if backend configuration exists
+        - script: |
+            echo "Checking if backend storage account exists..."
+            STORAGE_ACCOUNT_CHECK=$(az storage account show \
+              --name $(bootstrap_storage_account_name) \
+              --resource-group $(bootstrap_resource_group_name) \
+              --query "name" --output tsv || echo "notfound")
+
+            if [ "$STORAGE_ACCOUNT_CHECK" = "notfound" ]; then
+              echo "Storage account does not exist."
+              echo "##vso[task.setvariable variable=STORAGE_EXISTS]false"
+            else
+              echo "Storage account exists."
+              echo "##vso[task.setvariable variable=STORAGE_EXISTS]true"
+            fi
+          displayName: Check Backend Storage
+
+        
         - script: |
             echo "Initializing Terraform for bootstrap storage..."
             az account set -s $(dataPlatformSubscriptionName)
@@ -50,7 +69,24 @@ stages:
             terraform init
             terraform plan -var-file="tfvars/$(env).tfvars" -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
             terraform apply -var-file="tfvars/$(env).tfvars" -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
+          condition: and(succeeded(), eq(variables['STORAGE_EXISTS'], 'false'))
           displayName: Terraform Apply for Bootstrap Storage
+
+
+        - script: |
+            echo "Reinitializing Terraform with remote backend..."
+            cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
+            terraform init \
+              -reconfigure \
+              -backend-config="resource_group_name=$(bootstrap_resource_group_name)" \
+              -backend-config="storage_account_name=$(bootstrap_storage_account_name)" \
+              -backend-config="container_name=$(bootstrap_container_name)" \
+              -backend-config="key=tfstate/terraform.tfstate"
+
+            terraform plan -var-file="tfvars/$(env).tfvars" -out=bootstrap.tfplan
+            terraform apply -auto-approve bootstrap.tfplan
+          displayName: Configure Remote Backend
+
 
         - script: |
             echo "Fetching backend configuration dynamically for use in next stage"
