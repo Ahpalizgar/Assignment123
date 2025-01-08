@@ -27,8 +27,11 @@ stages:
   variables:
     - group: ${{variables.keyVaultName}}
     - template: /variables/${{variables.env}}.yml
-    - bootstrap_resource_group_name: "tf-bootstrap-rg"
-    - bootstrap_storage_account_name: "tfbootstrapstorage"
+    - name: bootstrap_resource_group_name
+      value: "tf-bootstrap-rg"
+    - name: bootstrap_storage_account_name
+      value: "tfbootstrapstorage"
+
   jobs:
     - job: bootstrap_storage
       displayName: Bootstrap Terraform State Storage
