@@ -31,7 +31,6 @@ stages:
     - job: bootstrap_storage
       displayName: Bootstrap Terraform State Storage
       steps:
-        #- template: terraform/templates/install-tools.yml
         - task: TerraformInstaller@1
           inputs:
             version: 'latest'
@@ -48,7 +47,7 @@ stages:
             export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
 
             terraform init
-            terraform apply -var-file="env.tfvars" -auto-approve
+            terraform apply -var-file="tfvars/${{variables.env}}.tfvars" -auto-approve
           displayName: Terraform Apply for Bootstrap Storage
 
         - script: |
@@ -57,10 +56,6 @@ stages:
             RESOURCE_GROUP=$(terraform output -raw resource_group_name)
             STORAGE_ACCOUNT=$(terraform output -raw storage_account_name)
             CONTAINER_NAME=$(terraform output -raw container_name)
-
-            echo "RESOURCE_GROUP: $RESOURCE_GROUP"
-            echo "STORAGE_ACCOUNT: $STORAGE_ACCOUNT"
-            echo "CONTAINER_NAME: $CONTAINER_NAME"
 
             echo "##vso[task.setvariable variable=bootstrap_resource_group;isOutput=true]$RESOURCE_GROUP"
             echo "##vso[task.setvariable variable=bootstrap_storage_account;isOutput=true]$STORAGE_ACCOUNT"
@@ -80,7 +75,6 @@ stages:
         bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
       displayName: Terraform State Management
       steps:
-        #- template: terraform/templates/install-tools.yml
         - task: TerraformInstaller@1
           inputs:
             version: 'latest'
@@ -116,7 +110,6 @@ stages:
         bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
     displayName: Terraform State Management
     steps:
-      #- template: terraform/templates/install-tools.yml
       - task: TerraformInstaller@1
         inputs:
           version: 'latest'
