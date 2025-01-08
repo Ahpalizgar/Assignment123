@@ -45,8 +45,11 @@ stages:
         # Step 1: Check if backend configuration exists
         - script: |
             echo "Checking if backend storage account exists..."
-            az login --service-principal --username $(apdap-devops-sc-client-id) --password $(apdap-devops-sc-client-secret) --tenant $(tenant_id)
-            
+            az login --service-principal \
+              --username "$(apdap-devops-sc-client-id)" \
+              --password "$(apdap-devops-sc-client-secret)" \
+              --tenant "0d739c66-dcf8-4b06-87ab-9052bd918a5f"
+
             STORAGE_ACCOUNT_CHECK=$(az storage account show \
               --name $(bootstrap_storage_account_name) \
               --resource-group $(bootstrap_resource_group_name) \
