@@ -1,4 +1,4 @@
-bootstrap_resource_group_name = "tf-bootstrap-rg-dev"
-bootstrap_storage_account_name = "tfbootstrapstoragedev"
+bootstrap_resource_group_name = "tf-bootstrap-rg"
+bootstrap_storage_account_name = "tfbootstrapstorage"
 bootstrap_container_name = "tfstate"
-
+environment = "dev"

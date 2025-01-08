@@ -18,3 +18,8 @@ variable "bootstrap_container_name" {
   description = "Name of the storage container for bootstrap storage"
   type        = string
 }
+
+variable "environment" {
+  description = "Name of the environment"
+  type        = string
+}
