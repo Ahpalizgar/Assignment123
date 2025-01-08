@@ -101,7 +101,9 @@ stages:
   variables:
     - group: ${{variables.keyVaultName}}
     - template: /variables/${{variables.env}}.yml
-  dependsOn: tf_bootstrap_storage
+  dependsOn: 
+    - tf_bootstrap_storage
+    - tf_state_management
   jobs:
   - job: terraform_plan
     variables:
