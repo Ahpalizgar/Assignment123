@@ -31,6 +31,8 @@ stages:
       value: "tf-bootstrap-rg"
     - name: bootstrap_storage_account_name
       value: "tfbootstrapstorage"
+    - name: bootstrap_container_name
+      value: "tfstate"
 
   jobs:
     - job: bootstrap_storage
@@ -85,7 +87,7 @@ stages:
               -backend-config="resource_group_name=$(bootstrap_resource_group_name)" \
               -backend-config="storage_account_name=$(bootstrap_storage_account_name)" \
               -backend-config="container_name=$(bootstrap_container_name)" \
-              -backend-config="key=tfstate/terraform.tfstate"
+              -backend-config="key=terraform.tfstate"
 
             terraform plan -var-file="tfvars/$(env).tfvars" -out=bootstrap.tfplan
             terraform apply -auto-approve bootstrap.tfplan
