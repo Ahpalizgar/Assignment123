@@ -67,6 +67,8 @@ stages:
           displayName: Set Backend Configuration Variables
 
 - stage: tf_state_management
+  variables:
+    - group: ${{variables.keyVaultName}}
   dependsOn: tf_bootstrap_storage
   jobs:
     - job: terraform_state_management
@@ -81,7 +83,7 @@ stages:
         - script: |
             echo "Using dynamic backend configuration..."
             cd $(System.DefaultWorkingDirectory)/terraform
-            
+
             # Set Azure provider authentication variables
             export ARM_SUBSCRIPTION_ID=$(dataPlatformSubscriptionId)
             export ARM_CLIENT_ID=$(apdap-devops-sc-client-id)
