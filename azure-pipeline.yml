@@ -112,6 +112,16 @@ stages:
         bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
     displayName: Terraform State Management
     steps:
+      - script: |
+            echo "Using dynamic backend configuration..."
+            echo "bootstrap_resource_group: $(bootstrap_resource_group)"
+            echo "bootstrap_storage_account: $(bootstrap_storage_account)"
+            echo "bootstrap_container_name: $(bootstrap_container_name)"
+
+            echo "bootstrap_resource_group: $(variables.bootstrap_resource_group)"
+            echo "bootstrap_storage_account: $(variables.bootstrap_storage_account)"
+            echo "bootstrap_container_name: $(variables.bootstrap_container_name)"
+
       - template: terraform/templates/install-tools.yml
       - template: terraform/templates/terraform-plan.yml
         parameters:
