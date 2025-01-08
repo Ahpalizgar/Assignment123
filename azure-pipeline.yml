@@ -31,8 +31,11 @@ stages:
     - job: bootstrap_storage
       displayName: Bootstrap Terraform State Storage
       steps:
-        - template: terraform/templates/install-tools.yml
-        # Initialize and Apply Bootstrap
+        #- template: terraform/templates/install-tools.yml
+        - task: TerraformInstaller@1
+          inputs:
+            version: 'latest'
+
         - script: |
             echo "Initializing Terraform for bootstrap storage..."
             az account set -s $(dataPlatformSubscriptionName)
@@ -48,7 +51,6 @@ stages:
             terraform apply -var-file="env.tfvars" -auto-approve
           displayName: Terraform Apply for Bootstrap Storage
 
-        # Fetch Output Values
         - script: |
             echo "Fetching backend configuration dynamically..."
             cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
@@ -78,8 +80,10 @@ stages:
         bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
       displayName: Terraform State Management
       steps:
-        - template: terraform/templates/install-tools.yml
-        # Use variables from the previous stage
+        #- template: terraform/templates/install-tools.yml
+        - task: TerraformInstaller@1
+          inputs:
+            version: 'latest'
         - script: |
             echo "Using dynamic backend configuration..."
             cd $(System.DefaultWorkingDirectory)/terraform
@@ -112,17 +116,10 @@ stages:
         bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
     displayName: Terraform State Management
     steps:
-      - script: |
-            echo "Using dynamic backend configuration..."
-            echo "bootstrap_resource_group: $(bootstrap_resource_group)"
-            echo "bootstrap_storage_account: $(bootstrap_storage_account)"
-            echo "bootstrap_container_name: $(bootstrap_container_name)"
-
-            echo "bootstrap_resource_group: $(variables.bootstrap_resource_group)"
-            echo "bootstrap_storage_account: $(variables.bootstrap_storage_account)"
-            echo "bootstrap_container_name: $(variables.bootstrap_container_name)"
-
-      - template: terraform/templates/install-tools.yml
+      #- template: terraform/templates/install-tools.yml
+      - task: TerraformInstaller@1
+        inputs:
+          version: 'latest'
       - template: terraform/templates/terraform-plan.yml
         parameters:
           env: $(env)
