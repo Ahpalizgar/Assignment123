@@ -1,9 +1,3 @@
-terraform {
-  backend "azurerm" {
-    # Leave empty - configuration will be provided by pipeline
-  }
-}
-
 provider "azurerm" {
   features {}
 }

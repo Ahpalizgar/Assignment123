@@ -108,18 +108,18 @@ stages:
         #   displayName: Configure Remote Backend
 
 
-        - script: |
-            echo "Fetching backend configuration dynamically for use in next stage"
-            cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
-            RESOURCE_GROUP=$(terraform output -raw resource_group_name)
-            STORAGE_ACCOUNT=$(terraform output -raw storage_account_name)
-            CONTAINER_NAME=$(terraform output -raw container_name)
+        # - script: |
+        #     echo "Fetching backend configuration dynamically for use in next stage"
+        #     cd $(System.DefaultWorkingDirectory)/terraform/tf-bootstrap-storage
+        #     RESOURCE_GROUP=$(terraform output -raw resource_group_name)
+        #     STORAGE_ACCOUNT=$(terraform output -raw storage_account_name)
+        #     CONTAINER_NAME=$(terraform output -raw container_name)
 
-            echo "##vso[task.setvariable variable=bootstrap_resource_group;isOutput=true]$RESOURCE_GROUP"
-            echo "##vso[task.setvariable variable=bootstrap_storage_account;isOutput=true]$STORAGE_ACCOUNT"
-            echo "##vso[task.setvariable variable=bootstrap_container_name;isOutput=true]$CONTAINER_NAME"
-          name: stagevars
-          displayName: Set Backend Configuration Variables
+        #     echo "##vso[task.setvariable variable=bootstrap_resource_group;isOutput=true]$RESOURCE_GROUP"
+        #     echo "##vso[task.setvariable variable=bootstrap_storage_account;isOutput=true]$STORAGE_ACCOUNT"
+        #     echo "##vso[task.setvariable variable=bootstrap_container_name;isOutput=true]$CONTAINER_NAME"
+        #   name: stagevars
+        #   displayName: Set Backend Configuration Variables
 
 
 - stage: Terraform_run
@@ -129,10 +129,10 @@ stages:
   dependsOn: tf_bootstrap_storage
   jobs:
   - job: terraform_plan
-    variables:
-        bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_resource_group']]
-        bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_storage_account']]
-        bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
+    # variables:
+    #     bootstrap_resource_group: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_resource_group']]
+    #     bootstrap_storage_account: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_storage_account']]
+    #     bootstrap_container_name: $[stageDependencies.tf_bootstrap_storage.bootstrap_storage.outputs['stagevars.bootstrap_container_name']]
     displayName: Terraform State Management
     steps:
       - task: TerraformInstaller@1
@@ -147,9 +147,9 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-          bootstrap_resource_group: $(bootstrap_resource_group)
-          bootstrap_storage_account: $(bootstrap_storage_account)
-          bootstrap_container_name: $(bootstrap_container_name)
+          # bootstrap_resource_group: $(bootstrap_resource_group)
+          # bootstrap_storage_account: $(bootstrap_storage_account)
+          # bootstrap_container_name: $(bootstrap_container_name)
           
       - template: terraform/templates/terraform-apply.yml
         parameters:
@@ -159,6 +159,6 @@ stages:
           dataPlatformPrincipalKey: $(apdap-devops-sc-client-secret)
           dataPlatformSubscriptionId: $(dataPlatformSubscriptionId)
           dataPlatformSubscriptionName: $(dataPlatformSubscriptionName)
-          bootstrap_resource_group: $(bootstrap_resource_group)
-          bootstrap_storage_account: $(bootstrap_storage_account)
-          bootstrap_container_name: $(bootstrap_container_name)
+          # bootstrap_resource_group: $(bootstrap_resource_group)
+          # bootstrap_storage_account: $(bootstrap_storage_account)
+          # bootstrap_container_name: $(bootstrap_container_name)
