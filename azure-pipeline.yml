@@ -98,7 +98,6 @@ stages:
             export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
 
             terraform init \
-              -migrate-state \
               -backend-config="resource_group_name=$(bootstrap_resource_group_name)-$(env)" \
               -backend-config="storage_account_name=$(bootstrap_storage_account_name)$(env)" \
               -backend-config="container_name=$(bootstrap_container_name)" \
