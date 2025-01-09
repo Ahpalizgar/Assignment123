@@ -99,8 +99,8 @@ stages:
 
             terraform init \
               -reconfigure \
-              -backend-config="resource_group_name=$(bootstrap_resource_group_name)" \
-              -backend-config="storage_account_name=$(bootstrap_storage_account_name)" \
+              -backend-config="resource_group_name=$(bootstrap_resource_group_name)-$(env)" \
+              -backend-config="storage_account_name=$(bootstrap_storage_account_name)$(env)" \
               -backend-config="container_name=$(bootstrap_container_name)" \
               -backend-config="key=terraform.tfstate"
 
