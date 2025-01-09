@@ -49,10 +49,12 @@ stages:
               --username "$(apdap-devops-sc-client-id)" \
               --password "$(apdap-devops-sc-client-secret)" \
               --tenant "0d739c66-dcf8-4b06-87ab-9052bd918a5f"
+            
+            az account set -s $(dataPlatformSubscriptionName)
 
             STORAGE_ACCOUNT_CHECK=$(az storage account show \
               --name $(bootstrap_storage_account_name)$(env) \
-              --resource-group $(bootstrap_resource_group_name)$(env) \
+              --resource-group $(bootstrap_resource_group_name)-$(env) \
               --query "name" --output tsv || echo "notfound")
 
             if [ "$STORAGE_ACCOUNT_CHECK" = "notfound" ]; then
