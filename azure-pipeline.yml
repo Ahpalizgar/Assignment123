@@ -79,7 +79,7 @@ stages:
             export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
 
 
-            terraform init -backend=false 
+            terraform init 
             terraform plan -var-file="tfvars/$(env).tfvars" -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
             terraform apply -var-file="tfvars/$(env).tfvars" -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
           condition: and(succeeded(), eq(variables['STORAGE_EXISTS'], 'false'))
@@ -103,8 +103,8 @@ stages:
               -backend-config="container_name=$(bootstrap_container_name)" \
               -backend-config="key=terraform.tfstate"
 
-            terraform plan -var-file="tfvars/$(env).tfvars" -out="bootstrap.tfplan"
-            terraform apply -auto-approve "bootstrap.tfplan"
+            terraform plan -var-file="tfvars/$(env).tfvars" -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
+            terraform apply -var-file="tfvars/$(env).tfvars" -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
           displayName: Configure Remote Backend
 
 
