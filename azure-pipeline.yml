@@ -104,8 +104,8 @@ stages:
               -backend-config="container_name=$(bootstrap_container_name)" \
               -backend-config="key=terraform.tfstate"
 
-            terraform plan -var-file="tfvars/$(env).tfvars" -out=bootstrap.tfplan
-            terraform apply -auto-approve bootstrap.tfplan
+            terraform plan -var-file="tfvars/$(env).tfvars" -out="bootstrap.tfplan"
+            terraform apply -auto-approve "bootstrap.tfplan"
           displayName: Configure Remote Backend
 
 
