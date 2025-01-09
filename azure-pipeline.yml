@@ -79,7 +79,7 @@ stages:
             export ARM_TENANT_ID="0d739c66-dcf8-4b06-87ab-9052bd918a5f"
 
 
-            terraform init
+            terraform init -backend=false 
             terraform plan -var-file="tfvars/$(env).tfvars" -out="$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
             terraform apply -var-file="tfvars/$(env).tfvars" -auto-approve "$(System.DefaultWorkingDirectory)/$(Build.BuildId).tfplan"
           condition: and(succeeded(), eq(variables['STORAGE_EXISTS'], 'false'))
